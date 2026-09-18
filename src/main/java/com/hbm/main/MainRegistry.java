@@ -324,7 +324,6 @@ public class MainRegistry {
         RBMKFuelRecipes.registerRecipes();
         DFCRecipes.register();
         StorageDrumRecipes.registerRecipes();
-        NuclearTransmutationRecipes.registerRecipes();
         EngineRecipes.registerEngineRecipes();
         FluidCombustionRecipes.registerFluidCombustionRecipes();
         HbmDetox.init();

@@ -2,7 +2,6 @@ package com.hbm.handler.jei;
 
 import com.hbm.Tags;
 import com.hbm.inventory.FluidContainerRegistry;
-import com.hbm.inventory.RecipesCommon.AStack;
 import com.hbm.inventory.RecipesCommon.ComparableStack;
 import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.fluid.FluidType;
@@ -34,7 +33,6 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -52,7 +50,6 @@ public class JeiRecipes {
 	private static List<BreederRecipe> breederRecipes = null;
 	private static List<SILEXRecipe> silexRecipes = null;
 	private static final Map<EnumWavelengths, List<SILEXRecipe>> waveSilexRecipes = new HashMap<>();
-    private static List<TransmutationRecipe> transmutationRecipes = null;
 	private static List<IRecipe> grenadeRecipes = null;
 	
 	private static List<ItemStack> batteries = null;
@@ -158,24 +155,6 @@ public class JeiRecipes {
 		@Override
 		public void getIngredients(IIngredients ingredients) {
 			ingredients.setInput(VanillaTypes.ITEM, input);
-			ingredients.setOutput(VanillaTypes.ITEM, output);
-		}
-	}
-
-	public static class TransmutationRecipe implements IRecipeWrapper {
-		
-		private final List<List<ItemStack>> inputs;
-		private final ItemStack output;
-		
-		public TransmutationRecipe(List<ItemStack> inputs, ItemStack output) {
-			this.inputs = new ArrayList<>();
-			this.inputs.add(inputs);
-			this.output = output; 
-		}
-		
-		@Override
-		public void getIngredients(IIngredients ingredients) {
-			ingredients.setInputLists(VanillaTypes.ITEM, inputs);
 			ingredients.setOutput(VanillaTypes.ITEM, output);
 		}
 	}
@@ -634,19 +613,6 @@ public class JeiRecipes {
 		
 		return storageDrumRecipes;
 	}
-
-	public static List<TransmutationRecipe> getTransmutationRecipes(){
-		if(transmutationRecipes != null)
-			return transmutationRecipes;
-		transmutationRecipes = new ArrayList<>();
-		
-		for(Map.Entry<AStack, ItemStack> entry : NuclearTransmutationRecipes.recipesOutput.entrySet()){
-			transmutationRecipes.add(new TransmutationRecipe(entry.getKey().getStackList(), entry.getValue()));
-		}
-		
-		return transmutationRecipes;
-	}
-	
 
 	public static List<RefineryRecipe> getRefineryRecipe() {
 		if(refineryRecipes != null)

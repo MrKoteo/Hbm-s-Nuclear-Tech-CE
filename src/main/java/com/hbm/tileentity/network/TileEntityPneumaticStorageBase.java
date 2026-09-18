@@ -18,6 +18,7 @@ import com.hbm.uninos.UniNodespace;
 import com.hbm.uninos.networkproviders.PneumaticNetwork;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
@@ -35,7 +36,7 @@ public abstract class TileEntityPneumaticStorageBase extends TileEntityMachineBa
 
 	public TileEntityPneumaticStorageBase(int slots) {
 		super(slots);
-		this.compair = new FluidTankNTM(Fluids.AIR, 4_000).withPressure(1);
+		this.compair = new FluidTankNTM(Fluids.AIR, 4_000).withOwner(this).withPressure(1);
 		this.monitors = new SlotMonitor[slots];
 
 		for(int i = 0; i < monitors.length; i++) this.monitors[i] = new SlotMonitor(i, this);
@@ -47,7 +48,7 @@ public abstract class TileEntityPneumaticStorageBase extends TileEntityMachineBa
 	}
 
 	@Override
-	public void receiveControl(NBTTagCompound data) {
+	public void receiveControl(EntityPlayerMP player, NBTTagCompound data) {
 
 		if(data.hasKey("pressure")) {
 			int pressure = this.compair.getPressure() + 1;

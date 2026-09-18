@@ -6,6 +6,7 @@ import com.hbm.main.ResourceManager;
 import com.hbm.render.item.ItemRenderBase;
 import com.hbm.render.misc.SoyuzPronter;
 import com.hbm.tileentity.machine.TileEntityLaunchpadSoyuz;
+import com.hbm.tileentity.machine.TileEntityLaunchpadSoyuz.SoyuzStatus;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.Item;
@@ -23,12 +24,16 @@ public class RenderLaunchpadSoyuz extends TileEntitySpecialRenderer<TileEntityLa
 		GlStateManager.enableCull();
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 
+		float rotation = 0F;
+
 		switch(launchpad.getBlockMetadata() - 10) {
-		case 2: GlStateManager.rotate(90, 0F, 1F, 0F); break;
-		case 4: GlStateManager.rotate(180, 0F, 1F, 0F); break;
-		case 3: GlStateManager.rotate(270, 0F, 1F, 0F); break;
-		case 5: GlStateManager.rotate(0, 0F, 1F, 0F); break;
+		case 2: rotation = 90F; break;
+		case 4: rotation = 180F; break;
+		case 3: rotation = 270F; break;
+		case 5: rotation = 0F; break;
 		}
+
+		GlStateManager.rotate(rotation, 0F, 1F, 0F);
 
 		GlStateManager.translate(-4, 0, -4);
 
@@ -36,6 +41,17 @@ public class RenderLaunchpadSoyuz extends TileEntitySpecialRenderer<TileEntityLa
 		float carriage = MathHelper.clamp(launchpad.getInterpPos(TileEntityLaunchpadSoyuz.INDEX_CARRIAGE, interp) * -19.5F + 19.5F, 0F, 19.5F);
 		float wheels = (float) (carriage * 360D / Math.PI);
 		float tilt = launchpad.getInterpPos(TileEntityLaunchpadSoyuz.INDEX_TILT, interp);
+
+		boolean renderSoyuz = launchpad.loadedType >= 0 && launchpad.soyuzStatus != SoyuzStatus.ABSENT;
+		boolean lockSoyuz = launchpad.soyuzStatus == SoyuzStatus.LAUNCHING;
+
+		if(renderSoyuz && lockSoyuz) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(0, 4, 0);
+			GlStateManager.rotate(rotation, 0F, -1F, 0F);
+			SoyuzPronter.prontSoyuz(launchpad.loadedType);
+			GlStateManager.popMatrix();
+		}
 
 		bindTexture(ResourceManager.launchpad_soyuz_tex);
 
@@ -86,10 +102,11 @@ public class RenderLaunchpadSoyuz extends TileEntitySpecialRenderer<TileEntityLa
 
 		ResourceManager.launchpad_soyuz.renderPart("Mount");
 
-		GlStateManager.translate(0, 4, 0);
-
-		if(launchpad.loadedType >= 0)
+		if(renderSoyuz && !lockSoyuz) {
+			GlStateManager.translate(0, 4, 0);
+			GlStateManager.rotate(rotation, 0F, -1F, 0F);
 			SoyuzPronter.prontSoyuz(launchpad.loadedType);
+		}
 
 		GlStateManager.shadeModel(GL11.GL_FLAT);
 		GlStateManager.popMatrix();
@@ -104,26 +121,15 @@ public class RenderLaunchpadSoyuz extends TileEntitySpecialRenderer<TileEntityLa
 	public ItemRenderBase getRenderer(Item item) {
 		return new ItemRenderBase() {
 			public void renderInventory() {
-				GlStateManager.translate(0, -4, 0);
-				GlStateManager.scale(3, 3, 3);
+				GlStateManager.translate(6, -1.5, 0);
+				GlStateManager.scale(1.125, 1.125, 1.125);
+				GlStateManager.rotate(90, 0, 1, 0);
 			}
-
 			public void renderCommon() {
-				GlStateManager.rotate(90, 0F, 1F, 0F);
-				GlStateManager.scale(1D / 48D, 1D / 48D, 1D / 48D);
-				GlStateManager.translate(-0.5D, 0D, 21.375D);
+				GlStateManager.scale(0.25, 0.25, 0.25);
 				GlStateManager.shadeModel(GL11.GL_SMOOTH);
-
 				bindTexture(ResourceManager.launchpad_soyuz_tex);
 				ResourceManager.launchpad_soyuz.renderPart("Launchpad");
-
-				for(int i = 1; i <= 5; i++) {
-					GlStateManager.pushMatrix();
-					GlStateManager.translate(0, 0, i == 5 ? 3F : 4.5F);
-					ResourceManager.launchpad_soyuz.renderPart("Strut" + i);
-					GlStateManager.popMatrix();
-				}
-
 				GlStateManager.shadeModel(GL11.GL_FLAT);
 			}
 		};

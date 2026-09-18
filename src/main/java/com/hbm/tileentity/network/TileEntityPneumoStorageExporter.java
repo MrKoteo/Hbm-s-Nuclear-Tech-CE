@@ -8,10 +8,12 @@ import com.hbm.interfaces.IControlReceiver;
 import com.hbm.inventory.container.ContainerPneumoStorageExporter;
 import com.hbm.inventory.gui.GUIPneumoStorageExporter;
 import com.hbm.lib.ForgeDirection;
+import com.hbm.tileentity.IControlReceiverFilter;
 import com.hbm.util.BobMathUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -23,7 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 @AutoRegister(name = "tileentity_pneumatic_storage_exporter")
-public class TileEntityPneumoStorageExporter extends TileEntityPneumaticMachineBase implements IRORInteractive, IControlReceiver {
+public class TileEntityPneumoStorageExporter extends TileEntityPneumaticMachineBase implements IRORInteractive, IControlReceiver, IControlReceiverFilter {
 
 	/** If requests should be pulled repeatedly every tick */
 	public boolean continuousRequest = false;
@@ -305,7 +307,7 @@ public class TileEntityPneumoStorageExporter extends TileEntityPneumaticMachineB
 	}
 
 	@Override
-	public void receiveControl(NBTTagCompound data) {
+	public void receiveControl(EntityPlayerMP player, NBTTagCompound data) {
 		if(data.hasKey("continuous")) {
 			this.continuousRequest = !this.continuousRequest;
 		}
@@ -316,7 +318,27 @@ public class TileEntityPneumoStorageExporter extends TileEntityPneumaticMachineB
 		if(data.hasKey("ror")) {
 			this.rorConfiguredMode = !this.rorConfiguredMode;
 		}
+		if(data.hasKey("slot")) {
+			this.setFilterContents(data);
+		}
 		this.markDirty();
+	}
+
+	@Override
+	public void setFilterContents(NBTTagCompound nbt) {
+		int slot = nbt.getInteger("slot");
+		int[] range = this.getFilterSlots();
+		if(slot < range[0] || slot >= range[1]) return;
+
+		IControlReceiverFilter.super.setFilterContents(nbt);
+	}
+
+	@Override
+	public void nextMode(int i) { }
+
+	@Override
+	public int[] getFilterSlots() {
+		return new int[] {0, 9};
 	}
 
 	@Override

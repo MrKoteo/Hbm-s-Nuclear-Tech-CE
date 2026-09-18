@@ -1,5 +1,6 @@
 package com.hbm.config;
 
+import com.hbm.handler.radiation.RadiationSystemNT;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
@@ -50,6 +51,8 @@ public class RadiationConfig {
     public static double radHalfLifeSeconds = 120D;
     public static double radDiffusivity = 10.0;
 
+	public static double chunkRadCap = -1;
+
     public static void loadFromConfig(Configuration config) {
 		// afterrain duration
 		Property radRain = config.get(CommonConfig.CATEGORY_RADIATION, "13.12_falloutRainDuration", 2000);
@@ -73,6 +76,9 @@ public class RadiationConfig {
 		enableContamination = CommonConfig.createConfigBool(config, CommonConfig.CATEGORY_RADIATION, "13.18_enableContamination", "Toggles player contamination (and negative effects from radiation poisoning)", true);
 		enableContaminationOnGround = CommonConfig.createConfigBool(config, CommonConfig.CATEGORY_RADIATION, "13.18.1_enableContaminationOnGround", "Toggles contamination for items being on-ground", false);
 		blocksFallCh = CommonConfig.createConfigInt(config, CommonConfig.CATEGORY_RADIATION, "13.19_blocksFallingChance", "The chance (in percentage form) that a block with low blast resistance will fall down. -1 Disables falling", 100);
+	    chunkRadCap = CommonConfig.createConfigDouble(config, CommonConfig.CATEGORY_RADIATION, "13.20_chunkRadiationCap", "Limits how high chunk radiation can get. (-1 for no limit)", -1);
+	    if (chunkRadCap >= 0)
+			RadiationSystemNT.RAD_MAX = chunkRadCap;
 		// railgun
 		Property railDamage = config.get(CommonConfig.CATEGORY_EXPLOSIONS, "6.20_railgunDamage", 1000);
 		railDamage.setComment("How much damage a railgun death blast does per tick");

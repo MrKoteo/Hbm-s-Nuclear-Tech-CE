@@ -82,8 +82,7 @@ public class CustomMachineRecipeHandler implements IRecipeCategory<CustomMachine
 
 		int slot = 0;
 		for(int i = 0; i < wrapper.recipe.inputFluids.length && i < 3; i++) {
-			stacks.init(slot, true, 12 + i * 18 - 1, 6 - 1);
-			stacks.set(slot, ItemFluidIcon.make(wrapper.recipe.inputFluids[i]));
+			EmiCompat.initSlot(recipeLayout, slot, true, 12 + i * 18 - 1, 6 - 1, Collections.singletonList(ItemFluidIcon.make(wrapper.recipe.inputFluids[i])));
 			slot++;
 		}
 		for(int i = 0; i < wrapper.recipe.inputItems.length && i < 6; i++) {
@@ -94,8 +93,7 @@ public class CustomMachineRecipeHandler implements IRecipeCategory<CustomMachine
 			slot++;
 		}
 		for(int i = 0; i < wrapper.recipe.outputFluids.length && i < 3; i++) {
-			stacks.init(slot, false, 102 + i * 18 - 1, 6 - 1);
-			stacks.set(slot, ItemFluidIcon.make(wrapper.recipe.outputFluids[i]));
+			EmiCompat.initSlot(recipeLayout, slot, false, 102 + i * 18 - 1, 6 - 1, Collections.singletonList(ItemFluidIcon.make(wrapper.recipe.outputFluids[i])));
 			slot++;
 		}
 		for(int i = 0; i < wrapper.recipe.outputItems.length && i < 6; i++) {
@@ -106,8 +104,7 @@ public class CustomMachineRecipeHandler implements IRecipeCategory<CustomMachine
 			slot++;
 		}
 
-		stacks.init(slot, false, 75 - 1, 42 - 1);
-		stacks.set(slot, new ItemStack(ModBlocks.custom_machine, 1, 100 + CustomMachineConfigJSON.niceList.indexOf(conf)));
+		EmiCompat.initDisplaySlot(recipeLayout, slot, false, 75 - 1, 42 - 1, Collections.singletonList(new ItemStack(ModBlocks.custom_machine, 1, 100 + CustomMachineConfigJSON.niceList.indexOf(conf))));
 	}
 
 	public class JeiCustomMachineRecipe implements IRecipeWrapper {

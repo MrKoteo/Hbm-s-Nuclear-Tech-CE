@@ -104,7 +104,7 @@ public class JEIConfig implements IModPlugin {
     public static final String SOLIDIFICATION = "hbm.solidification";
     public static final String STORAGEDRUM = "hbm.storage_drum";
     public static final String SUPERCOMPUTER = "hbm.supercomputer";
-    public static final String TRANSMUTATION = "hbm.transmutation";
+    public static final String SPACE_ASSEMBLER = "hbm.spaceassembler";
     public static final String WASTEDRUM = "hbm.waste_drum";
     static final String ORE_SLOPPER = "hbm.ore_slopper";
     static final String PA = "hbm.particle_accelerator";
@@ -152,6 +152,7 @@ public class JEIConfig implements IModPlugin {
     private ReformingHandler reformingHandler;
     private RockMillRecipeHandler rockMillHandler;
     private SuperComputerRecipeHandler superComputerHandler;
+    private SpaceAssemblerHandler spaceAssemblerHandler;
     private RotaryFurnaceRecipeHandler rotaryFurnaceRecipeHandler;
     private BlastFurnaceHandler blastFurnaceHandler;
     private RTGRecipeHandler rtgRecipeHandler;
@@ -239,6 +240,7 @@ public class JEIConfig implements IModPlugin {
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_precass), PREC_ASS);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_pyrooven), PYROLYSIS);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_supercomputer), SUPERCOMPUTER);
+        registry.addRecipeCatalyst(com.hbm.items.machine.ItemSatellite.make(com.hbm.items.machine.ItemSatellite.EnumSatType.SCIENCE_ASSEMBLER), SPACE_ASSEMBLER);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_rockmill), ROCKMILL);
         //This recipe catalyst doesn't work, since the book of is blacklisted.
         registry.addRecipeCatalyst(new ItemStack(ModItems.book_of_), BOOK);
@@ -270,7 +272,6 @@ public class JEIConfig implements IModPlugin {
 
         registry.addRecipes(assemblyMachineRecipeHandler.getRecipes(), ASSEMBLY_MACHINE);
         registry.addRecipes(JeiRecipes.getCyclotronRecipes(), CYCLOTRON);
-        registry.addRecipes(JeiRecipes.getTransmutationRecipes(), TRANSMUTATION);
         registry.addRecipes(PressRecipeHandler.getRecipes(), PRESS);
         registry.addRecipes(JeiRecipes.getAlloyRecipes(), ALLOY);
         registry.addRecipes(JeiRecipes.getGasCentrifugeRecipes(), GAS_CENT);
@@ -320,6 +321,7 @@ public class JEIConfig implements IModPlugin {
         registry.addRecipes(zirnoxHandler.getRecipes(), ZIRNOX);
         registry.addRecipes(rockMillHandler.getRecipes(), ROCKMILL);
         registry.addRecipes(superComputerHandler.getRecipes(), SUPERCOMPUTER);
+        registry.addRecipes(spaceAssemblerHandler.getRecipes(), SPACE_ASSEMBLER);
         registry.addRecipes(shredderHandler.getRecipes(), SHREDDER);
         registry.addRecipes(JeiRecipes.getFluidEquivalences(), FLUIDS);
         registry.addRecipes(JeiRecipes.getBookRecipes(), BOOK);
@@ -393,7 +395,6 @@ public class JEIConfig implements IModPlugin {
 		registry.addRecipeClickArea(GUIAnvil.class, 34, 26, 52-34, 44-26, ANVIL_SMITH);
 		registry.addRecipeClickArea(GUIAnvil.class, 12, 50, 48-12, 66-50, ANVIL_CON);
 		registry.addRecipeClickArea(GUIRBMKOutgasser.class, 64, 53, 48, 16, RBMKOUTGASSER);
-        registry.addRecipeClickArea(GUIMachineRTG.class, 134, 22, 16, 52, RTG);
         registry.addRecipeClickArea(GUIMachineArcWelder.class, 72, 38, 32, 13, ARC_WELDER);
         registry.addRecipeClickArea(GUIMachineRotaryFurnace.class, 63, 31, 32, 9, ROTARY_FURNACE);
         registry.addRecipeClickArea(GUIBlastFurnace.class, 62, 64, 56, 15, BLAST_FURNACE);
@@ -567,12 +568,12 @@ public class JEIConfig implements IModPlugin {
                 vacuumHandler = new VacuumRecipeHandler(help),
                 rockMillHandler = new RockMillRecipeHandler(help),
                 superComputerHandler = new SuperComputerRecipeHandler(help),
+                spaceAssemblerHandler = new SpaceAssemblerHandler(help),
                 zirnoxHandler = new ZirnoxRecipeHandler(help),
                 purexHandler = new PUREXRecipeHandler(help),
                 new GasCentrifugeRecipeHandler(help),
                 new BreederRecipeHandler(help),
                 new CyclotronRecipeHandler(help),
-                new TransmutationRecipeHandler(help),
                 new StorageDrumRecipeHandler(help),
                 new FluidRecipeHandler(help),
                 new SILEXRecipeHandler(help),

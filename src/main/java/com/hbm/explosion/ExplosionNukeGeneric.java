@@ -104,7 +104,7 @@ public class ExplosionNukeGeneric {
                 double entY = e.posY + e.getEyeHeight();
                 double entZ = e.posZ;
 
-                if (!isExplosionExempt(e) && !Library.isObstructed(world, x, y, z, entX, entY, entZ)) {
+                if (!isExplosionExempt(e) && !Library.isObstructedFar(world, x, y, z, entX, entY, entZ)) {
 
                     boolean doKnockback = true;
                     double damage = maxDamage * (radius - dist) / radius;

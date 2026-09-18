@@ -83,28 +83,29 @@ public class PUREXRecipes extends GenericRecipes<PUREXRecipe> {
 
         //CP-1
         String autoPile = "autoswitch.pile";
-        this.register((PUREXRecipe) new PUREXRecipe("purex.pilepu").setup(40, pilePower).setNameWrapper("purex.recycle").setGroup(autoPile, this)
-                .inputItems(new ComparableStack(ModItems.pile_rod_plutonium))
+        this.register((PUREXRecipe) new PUREXRecipe("purex.pilepu239").setup(40, pilePower).setNameWrapper("purex.recycle").setGroup(autoPile, this)
+                .inputItems(new ComparableStack(ModItems.pile_rod, 1, EnumPileRod.PU239))
+                .inputFluids(new FluidStack(Fluids.SULFURIC_ACID, 100))
+                .outputItems(new ItemStack(ModItems.billet_pu239, 2),
+                        new ItemStack(ModItems.billet_uranium, 1))
+                .setIconToFirstIngredient());
+        this.register((PUREXRecipe) new PUREXRecipe("purex.pilergp").setup(40, pilePower).setNameWrapper("purex.recycle").setGroup(autoPile, this)
+                .inputItems(new ComparableStack(ModItems.pile_rod, 1, EnumPileRod.RGP))
                 .inputFluids(new FluidStack(Fluids.SULFURIC_ACID, 100))
                 .outputItems(new ItemStack(ModItems.billet_pu_mix, 2),
-                        new ItemStack(ModItems.billet_uranium, 1),
-                        new ItemStack(ModItems.plate_iron, 2))
+                        new ItemStack(ModItems.billet_nuclear_waste, 1))
                 .setIconToFirstIngredient());
-
         this.register((PUREXRecipe) new PUREXRecipe("purex.pilethorium").setup(40, pilePower).setNameWrapper("purex.recycle").setGroup(autoPile, this)
                 .inputItems(new ComparableStack(ModItems.pile_rod, 1, EnumPileRod.THORIUM_FUEL))
                 .inputFluids(new FluidStack(Fluids.SULFURIC_ACID, 100))
                 .outputItems(new ItemStack(ModItems.billet_thorium_fuel, 2),
                         new ItemStack(ModItems.billet_nuclear_waste, 1))
                 .setIconToFirstIngredient());
-
-        this.register((PUREXRecipe) new PUREXRecipe("purex.pilepu239").setup(40, pilePower).setNameWrapper("purex.recycle").setGroup(autoPile, this)
-                .inputItems(new ComparableStack(ModItems.pile_rod_pu239))
+        this.register((PUREXRecipe) new PUREXRecipe("purex.pilewaste").setup(40, pilePower).setNameWrapper("purex.recycle").setGroup(autoPile, this)
+                .inputItems(new ComparableStack(ModItems.pile_rod, 1, EnumPileRod.WASTE))
                 .inputFluids(new FluidStack(Fluids.SULFURIC_ACID, 100))
-                .outputItems(new ItemStack(ModItems.billet_pu239, 1),
-                        new ItemStack(ModItems.billet_pu_mix, 1),
-                        new ItemStack(ModItems.billet_uranium, 1),
-                        new ItemStack(ModItems.plate_iron, 2))
+                .outputItems(new ItemStack(ModItems.billet_nuclear_waste, 2),
+                        new ItemStack(ModItems.billet_polonium, 1))
                 .setIconToFirstIngredient());
 
         // ZIRNOX

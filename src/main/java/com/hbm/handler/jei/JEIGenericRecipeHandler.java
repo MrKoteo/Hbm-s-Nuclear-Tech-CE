@@ -213,22 +213,43 @@ public abstract class JEIGenericRecipeHandler implements IRecipeCategory<JEIGene
 
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, JeiGenericRecipe wrapper, IIngredients ingredients) {
-        IGuiItemStackGroup stacks = recipeLayout.getItemStacks();
-
         List<List<ItemStack>> inputList = ingredients.getInputs(VanillaTypes.ITEM);
         List<List<ItemStack>> outputList = ingredients.getOutputs(VanillaTypes.ITEM);
 
         int[][] inPos = getInputSlotPositions(inputList.size());
         for (int i = 0; i < inputList.size(); i++) {
-            stacks.init(i, true, inPos[i][0] + wrapper.inputOffset - 1, inPos[i][1] - 1);
+            EmiCompat.initSlot(recipeLayout, i, true, inPos[i][0] + wrapper.inputOffset - 1, inPos[i][1] - 1, inputList.get(i));
+        }
+
+        boolean emi = EmiCompat.isEmiLayout(recipeLayout);
+        List<GenericRecipes.IOutput> sources = new ArrayList<>();
+        if (emi && wrapper.recipe.outputItem != null) {
+            for (GenericRecipes.IOutput out : wrapper.recipe.outputItem) {
+                ItemStack[] vars = out.getAllPossibilities();
+                if (vars != null && Arrays.stream(vars).anyMatch(s -> s != null && !s.isEmpty())) sources.add(out);
+            }
         }
 
         int[][] outPos = getOutputSlotPositions(outputList.size());
         for (int i = 0; i < outputList.size(); i++) {
-            stacks.init(inputList.size() + i, false, outPos[i][0] + wrapper.outputOffset - 1, outPos[i][1] - 1);
+            int x = outPos[i][0] + wrapper.outputOffset - 1;
+            int y = outPos[i][1] - 1;
+            GenericRecipes.IOutput source = i < sources.size() ? sources.get(i) : null;
+            if (isChanced(source)) {
+                EmiCompat.initDisplaySlot(recipeLayout, inputList.size() + i, false, x, y, outputList.get(i));
+                addHiddenOutputs(recipeLayout, source);
+            } else {
+                EmiCompat.initSlot(recipeLayout, inputList.size() + i, false, x, y, outputList.get(i));
+            }
         }
 
-        stacks.set(ingredients);
+        int slotIndex = inputList.size() + outputList.size();
+        EmiCompat.initDisplaySlot(recipeLayout, slotIndex, false, 74 + wrapper.machineOffset, wrapper.templates == null ? 29 : 36, Arrays.asList(wrapper.machines));
+        if (wrapper.templates != null && !wrapper.templates.isEmpty()) {
+            EmiCompat.initDisplaySlot(recipeLayout, slotIndex + 1, false, 74 + wrapper.machineOffset, 9, wrapper.templates);
+        }
+
+        if (emi) return;
 
         if (!wrapper.inputFluids.isEmpty() || !wrapper.outputFluids.isEmpty()) {
             IGuiFluidStackGroup fluids = recipeLayout.getFluidStacks();
@@ -251,17 +272,23 @@ public abstract class JEIGenericRecipeHandler implements IRecipeCategory<JEIGene
             }
             fluids.set(ingredients);
         }
+    }
 
-        int slotIndex = inputList.size() + outputList.size();
-        int mx = 74 + wrapper.machineOffset;
-        int my = (wrapper.templates == null) ? 29 : 36;
-        stacks.init(slotIndex, false, mx, my);
-        stacks.set(slotIndex, Arrays.asList(wrapper.machines));
+    private static boolean isChanced(GenericRecipes.IOutput output) {
+        if (output instanceof GenericRecipes.ChanceOutputMulti multi) return multi.pool.size() > 1 || multi.pool.stream().anyMatch(o -> o.chance < 1F);
+        return output instanceof GenericRecipes.ChanceOutput single && single.chance < 1F;
+    }
 
-        if (wrapper.templates != null && !wrapper.templates.isEmpty()) {
-            int tIndex = slotIndex + 1;
-            stacks.init(tIndex, false, 74 + wrapper.machineOffset, 9);
-            stacks.set(tIndex, wrapper.templates);
+    private static void addHiddenOutputs(IRecipeLayout layout, GenericRecipes.IOutput output) {
+        if (output instanceof GenericRecipes.ChanceOutputMulti multi) {
+            int totalWeight = 0;
+            for (GenericRecipes.ChanceOutput out : multi.pool) totalWeight += out.itemWeight;
+            for (GenericRecipes.ChanceOutput out : multi.pool) {
+                float share = totalWeight > 0 ? (float) out.itemWeight / totalWeight : 1F / multi.pool.size();
+                EmiCompat.addHiddenOutput(layout, out.stack.copy(), out.stack.getCount(), share * Math.min(out.chance, 1F));
+            }
+        } else if (output instanceof GenericRecipes.ChanceOutput single) {
+            EmiCompat.addHiddenOutput(layout, single.stack.copy(), single.stack.getCount(), single.chance);
         }
     }
 
