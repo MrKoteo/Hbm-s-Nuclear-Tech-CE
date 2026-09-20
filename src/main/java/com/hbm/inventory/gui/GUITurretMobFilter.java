@@ -186,11 +186,15 @@ public class GUITurretMobFilter extends GuiScreen {
                 return;
             }
 
+            int turretMobFilterSize = turret.mobFilter.size();
+
             NBTTagCompound data = new NBTTagCompound();
             data.setString("removeMobFilter", turret.mobFilter.get(filterScrollingList.selectedSlot));
             PacketThreading.createSendToServerThreadedPacket(new NBTControlPacket(data, turretPos));
 
-            if (!turret.mobFilter.isEmpty()) {
+            turretMobFilterSize--;
+
+            if (turretMobFilterSize > 0) {
                 filterScrollingList.selectedSlot = 0;
             } else {
                 filterScrollingList.selectedSlot = -1;
