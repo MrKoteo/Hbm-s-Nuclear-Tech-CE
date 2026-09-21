@@ -301,12 +301,19 @@ public abstract class AbstractWavefrontBakedModel extends AbstractBakedModel {
         }
 
         public BakedQuad buildQuad(TextureAtlasSprite sprite, int tintIndex, float uScale, float vScale) {
+            return buildQuad(sprite, tintIndex, uScale, vScale, 0xFFFFFF);
+        }
+
+        public BakedQuad buildQuad(TextureAtlasSprite sprite, int tintIndex, float uScale, float vScale, int rgb) {
+            int r = (rgb >> 16) & 0xFF;
+            int g = (rgb >> 8) & 0xFF;
+            int b = rgb & 0xFF;
             int[] vertexData = new int[format.getIntegerSize() * 4];
             float[] scratch = new float[4];
             for (int i = 0; i < 4; i++) {
                 int c = U.getInt(this, COLORS_BASE + i * 4L);
                 GeometryBakeUtil.putVertex(format, vertexData, i, px[i], py[i], pz[i], uu[i] * uScale, vv[i] * vScale,
-                        c, c, c, vertexNormals[i], sprite, scratch);
+                        c * r / 255, c * g / 255, c * b / 255, vertexNormals[i], sprite, scratch);
             }
             return new HbmBakedQuad(vertexData, tintIndex, facing, sprite, format);
         }
