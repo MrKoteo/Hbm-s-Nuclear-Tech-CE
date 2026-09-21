@@ -47,6 +47,7 @@ import com.hbm.render.anim.HbmAnimations;
 import com.hbm.render.anim.HbmAnimations.Animation;
 import com.hbm.render.anim.HbmAnimations.BlenderAnimation;
 import com.hbm.render.anim.sedna.HbmAnimationsSedna;
+import com.hbm.render.chunk.SectionGeometry;
 import com.hbm.render.item.weapon.sedna.ItemRenderWeaponBase;
 import com.hbm.render.misc.RenderAccessoryUtility;
 import com.hbm.render.misc.RenderScreenOverlay;
@@ -321,6 +322,7 @@ public class ModEventHandlerClient {
         Minecraft mc = Minecraft.getMinecraft();
         ArmorNo9.updateWorldHook(mc.world);
         if (e.phase == Phase.END) {
+            SectionGeometry.clientTick();
             if (!firstPersonAuxParticles.isEmpty()) {
                 Iterator<ParticleFirstPerson> i = firstPersonAuxParticles.iterator();
                 while (i.hasNext()) {
