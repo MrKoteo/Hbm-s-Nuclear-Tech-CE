@@ -26,4 +26,3 @@ eclipse
 run
 /logs/
 gradle-build.log
-gradle.properties
