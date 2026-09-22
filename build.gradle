@@ -2134,12 +2134,13 @@ tasks.withType(Test).configureEach {
     }
 }
 
+
 // ========== JSON MINIFIER ==========
 afterEvaluate {
     processResources {
         doLast {
             def outputDir = destinationDir ?: outputs.files.singleFile
-            fileTree(dir: outputDir, include: '**/*.json').each { file ->
+            fileTree(dir: outputDir, include: ['**/*.json','**/*.mcmeta']).each { file ->
                 try {
                     file.text = groovy.json.JsonOutput.toJson(new groovy.json.JsonSlurper().parse(file))
                 } catch (Exception ignore) {}

@@ -65,4 +65,9 @@ public class WorldConfig {
 		meteorShowerChance = CommonConfig.createConfigInt(config, CommonConfig.CATEGORY_METEORS, "5.04_meteorShowerChance", "The probability of a meteor spawning during meteor shower (an average of once every nTH ticks)", 20 * 60 * 15);
 		meteorShowerDuration = CommonConfig.createConfigInt(config, CommonConfig.CATEGORY_METEORS, "5.05_meteorShowerDuration", "Max duration of meteor shower in ticks", 20 * 60 * 30);
 	}
+
+	@Deprecated public static int uraniumSpawn = 0;
+	@Deprecated public static int thoriumSpawn = 0;
+	@Deprecated public static int titaniumSpawn = 0;
+	@Deprecated public static int sulfurSpawn = 0;
 }
