@@ -186,7 +186,7 @@ public abstract class BlockDummyable extends BlockContainer implements ICustomBl
     // the freshly-orphaned neighbors instead. Without this, destroying a long dummy
     // chain blows the JVM stack (each recursion level burns ~8 frames). idk why it isn't crashing in 1.7
     private void cascadeOrphans(World world, BlockPos start, IBlockState startState) {
-        if (startState.getBlock() != this || !isOrphan(world, start, startState)) return;
+        if (!isSameMultiblock(startState.getBlock()) || !isOrphan(world, start, startState)) return;
         safeRem = true;
         try {
             ArrayDeque<BlockPos> queue = new ArrayDeque<>();
@@ -194,7 +194,7 @@ public abstract class BlockDummyable extends BlockContainer implements ICustomBl
             while (!queue.isEmpty()) {
                 BlockPos p = queue.poll();
                 IBlockState s = world.getBlockState(p);
-                if (s.getBlock() != this) continue;
+                if (!isSameMultiblock(s.getBlock())) continue;
                 if (!isOrphan(world, p, s)) continue;
                 world.setBlockToAir(p);
                 for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {

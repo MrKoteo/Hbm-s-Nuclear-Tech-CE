@@ -89,6 +89,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
@@ -140,6 +141,7 @@ public class ModEventHandlerClient {
     public static final int flashDuration = 5_000;
     public static final int shakeDuration = 1_500;
     private static final ResourceLocation poster = new ResourceLocation(Tags.MODID + ":textures/models/misc/poster.png");
+    private static final ResourceLocation poster_cat = new ResourceLocation(Tags.MODID + ":textures/models/misc/poster_cat.png");
     public static Set<EntityLivingBase> specialDeathEffectEntities = new HashSet<>();
     public static ArrayDeque<ParticleFirstPerson> firstPersonAuxParticles = Queues.newArrayDeque();
     public static float deltaMouseX;
@@ -1487,24 +1489,28 @@ public class ModEventHandlerClient {
     @SubscribeEvent
     public void renderFrame(RenderItemInFrameEvent event) {
 
-        if (!event.getItem().isEmpty() && event.getItem().getItem() == ModItems.flame_pony) {
-            event.setCanceled(true);
+        if (event.getItem().isEmpty()) return;
 
-            double p = 0.0625D;
-            double o = p * 2.75D;
+        Item item = event.getItem().getItem();
+        ResourceLocation texture = item == ModItems.flame_pony ? poster : item == Items.PAPER ? poster_cat : null;
+        if (texture == null) return;
 
-            GlStateManager.disableLighting();
-            Minecraft.getMinecraft().renderEngine.bindTexture(poster);
-            net.minecraft.client.renderer.Tessellator tess = net.minecraft.client.renderer.Tessellator.getInstance();
-            BufferBuilder buf = tess.getBuffer();
-            buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            buf.pos(0.5, 0.5 + o, p * 0.5).tex(1, 0).endVertex();
-            buf.pos(-0.5, 0.5 + o, p * 0.5).tex(0, 0).endVertex();
-            buf.pos(-0.5, -0.5 + o, p * 0.5).tex(0, 1).endVertex();
-            buf.pos(0.5, -0.5 + o, p * 0.5).tex(1, 1).endVertex();
-            tess.draw();
-            GlStateManager.enableLighting();
-        }
+        event.setCanceled(true);
+
+        double z = -0.0625D * 0.5D;
+
+        GlStateManager.disableLighting();
+        GlStateManager.color(1F, 1F, 1F, 1F);
+        Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+        Tessellator tess = Tessellator.getInstance();
+        BufferBuilder buf = tess.getBuffer();
+        buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        buf.pos(-0.5, 0.5, z).tex(1, 0).endVertex();
+        buf.pos(0.5, 0.5, z).tex(0, 0).endVertex();
+        buf.pos(0.5, -0.5, z).tex(0, 1).endVertex();
+        buf.pos(-0.5, -0.5, z).tex(1, 1).endVertex();
+        tess.draw();
+        GlStateManager.enableLighting();
     }
 
     @SubscribeEvent
